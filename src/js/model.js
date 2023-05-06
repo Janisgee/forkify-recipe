@@ -1,5 +1,11 @@
+import { API_URL } from './config.js';
+
 export const state = {
   recipe: {},
+  search: {
+    query: '',
+    results: [],
+  },
 };
 
 const createRecipeObject = function (data) {
@@ -18,15 +24,31 @@ const createRecipeObject = function (data) {
 
 export const loadRecipe = async function () {
   try {
-    const apiUrl =
-      'https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bcae1';
+    const apiUrl = `${API_URL}/5ed6604591c37cdc054bcae1`;
 
     const response = await fetch(apiUrl);
-    console.log(response);
+
     const data = await response.json();
     state.recipe = createRecipeObject(data);
-    console.log(state.recipe);
   } catch (err) {
-    console.error(err);
+    console.error('💥⚠️⛔😭👎🏳️', err);
+    throw err;
+  }
+};
+
+export const loadSearchResult = async function (query) {
+  try {
+    console.log(query);
+
+    const apiUrl = `${API_URL}?search=${query}`;
+    const response = await fetch(apiUrl);
+
+    const data = await response.json();
+    console.log(data);
+    console.log(data.data.recipes);
+    state.search.results = data.data.recipes;
+    console.log(state.search.results);
+  } catch (err) {
+    console.log(err);
   }
 };
