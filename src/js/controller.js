@@ -57,8 +57,17 @@ const controlSearchResults = async function () {
   }
 };
 
+const controlServings = function (serving) {
+  // 1) Get new servings number
+  model.updateServings(serving);
+
+  // 3) Display new recipe with new servings
+  recipeView.render(model.state.recipe);
+};
+
 const init = function () {
   recipeView.addHandlerRender(controlRecipe);
+  recipeView.addHandlerUpdateServings(controlServings);
   searchView.addHandlerSearch(controlSearchResults);
 };
 

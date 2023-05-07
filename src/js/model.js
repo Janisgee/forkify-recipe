@@ -60,3 +60,11 @@ export const loadSearchResult = async function (query) {
     throw err;
   }
 };
+
+export const updateServings = function (newServings) {
+  state.recipe.ingredients.forEach(ing => {
+    console.log(ing);
+    ing.quantity = (ing.quantity / state.recipe.servings) * newServings;
+  });
+  state.recipe.servings = newServings;
+};
