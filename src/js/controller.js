@@ -6,6 +6,7 @@ import * as model from './model.js';
 import recipeView from './Views/recipeView.js';
 import searchView from './Views/searchView.js';
 import resultsView from './Views/resultsView.js';
+import paginationView from './Views/paginationView.js';
 
 recipeContainer = document.querySelector('.recipe');
 
@@ -49,11 +50,12 @@ const controlSearchResults = async function () {
     await model.loadSearchResult(query);
 
     // 3) Send data to resultView
-    resultsView.render(model.state.search.results);
+    resultsView.render(model.getSearchResultsPage());
 
-    //2)
+    // 4) Render Pagination button
+    paginationView.render(model.state.search);
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 };
 
@@ -65,10 +67,15 @@ const controlServings = function (serving) {
   recipeView.render(model.state.recipe);
 };
 
+const controlPagination = function () {
+  paginationView.render(model.getSearchResultsPage(1));
+};
+
 const init = function () {
   recipeView.addHandlerRender(controlRecipe);
   recipeView.addHandlerUpdateServings(controlServings);
   searchView.addHandlerSearch(controlSearchResults);
+  paginationView.addHandlerClick(controlPagination);
 };
 
 init();
