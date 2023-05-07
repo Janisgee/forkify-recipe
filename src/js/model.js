@@ -22,9 +22,10 @@ const createRecipeObject = function (data) {
   };
 };
 
-export const loadRecipe = async function () {
+export const loadRecipe = async function (id) {
   try {
-    const apiUrl = `${API_URL}/5ed6604591c37cdc054bcae1`;
+    console.log(id);
+    const apiUrl = `${API_URL}${id}`;
 
     const response = await fetch(apiUrl);
 
@@ -46,9 +47,16 @@ export const loadSearchResult = async function (query) {
     const data = await response.json();
     console.log(data);
     console.log(data.data.recipes);
-    state.search.results = data.data.recipes;
-    console.log(state.search.results);
+    state.search.results = data.data.recipes.map(rec => {
+      return {
+        id: rec.id,
+        image: rec.image_url,
+        publisher: rec.publisher,
+        title: rec.title,
+      };
+    });
   } catch (err) {
-    console.log(err);
+    console.error('💥⚠️⛔😭👎🏳️', err);
+    throw err;
   }
 };
