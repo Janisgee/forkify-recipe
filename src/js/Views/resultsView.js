@@ -11,6 +11,7 @@ class ResultsView extends View {
   _previewMarkup(data) {
     const windowID = window.location.hash.slice(1);
     const isActive = data.id === windowID;
+    const isUserGenerated = data.isMine;
 
     return `<li class="preview">
             <a class="preview__link ${
@@ -22,7 +23,10 @@ class ResultsView extends View {
               <div class="preview__data">
                 <h4 class="preview__title">${data.title}</h4>
                 <p class="preview__publisher">${data.publisher}</p>
-                <div class="preview__user-generated">
+                <div class="preview__user-generated ${
+                  isUserGenerated ? '' : 'hidden'
+                }">
+                
                   <svg>
                     <use href="${icons}#icon-user"></use>
                   </svg>

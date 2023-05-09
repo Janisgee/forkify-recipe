@@ -1,4 +1,4 @@
-import { API_URL, RES_PER_PAGE } from './config.js';
+import { API_URL, RES_PER_PAGE, API_KEY } from './config.js';
 
 export const state = {
   recipe: {},
@@ -41,7 +41,7 @@ export const loadRecipe = async function (id) {
 export const loadSearchResult = async function (query) {
   try {
     state.search.query = query;
-    const apiUrl = `${API_URL}?search=${query}`;
+    const apiUrl = `${API_URL}?search=${query}&key=${API_KEY}`;
     const response = await fetch(apiUrl);
 
     const data = await response.json();
