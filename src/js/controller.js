@@ -24,14 +24,15 @@ const timeout = function (s) {
 const controlRecipe = async function () {
   try {
     const id = window.location.hash.slice(1);
-    console.log(id);
-    // if (!id) return;
+
+    if (!id) return;
     // 1) Render spinner while loading recipe
     recipeView.renderSpinner();
 
+    // 4) rerender result bar for highlight
+    resultsView.render(model.getSearchResultsPage());
     // 2) Load recipe
     await model.loadRecipe(id);
-    console.log(model.state.recipe);
 
     // 3) Display recipe
     recipeView.render(model.state.recipe);
@@ -44,7 +45,9 @@ const controlSearchResults = async function () {
   try {
     // 1) getQuery
     const query = searchView.getQuery();
-    console.log(query);
+
+    //1.5) render load spinner
+    resultsView.renderSpinner();
 
     // 2) Send query to model get search data
     await model.loadSearchResult(query);

@@ -9,8 +9,13 @@ class ResultsView extends View {
   }
 
   _previewMarkup(data) {
+    const windowID = window.location.hash.slice(1);
+    const isActive = data.id === windowID;
+
     return `<li class="preview">
-            <a class="preview__link" href="#${data.id}">
+            <a class="preview__link ${
+              isActive ? 'preview__link--active' : ''
+            }" href="#${data.id}">
               <figure class="preview__fig">
                 <img src="${data.image}" alt="Test" />
               </figure>
