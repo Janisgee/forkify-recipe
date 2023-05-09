@@ -67,8 +67,15 @@ const controlServings = function (serving) {
   recipeView.render(model.state.recipe);
 };
 
-const controlPagination = function () {
-  paginationView.render(model.getSearchResultsPage(1));
+const controlPagination = function (goToPage) {
+  // 1) Display new page
+  resultsView.render(model.getSearchResultsPage(goToPage));
+
+  // 2) Update state new page number
+  model.updateSearchPage(goToPage);
+
+  // 3) Update new pagination button
+  paginationView.render(model.state.search);
 };
 
 const init = function () {

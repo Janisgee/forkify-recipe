@@ -42,7 +42,7 @@ export const loadRecipe = async function (id) {
 export const loadSearchResult = async function (query) {
   try {
     console.log(query);
-
+    state.search.query = query;
     const apiUrl = `${API_URL}?search=${query}`;
     const response = await fetch(apiUrl);
 
@@ -57,6 +57,8 @@ export const loadSearchResult = async function (query) {
         title: rec.title,
       };
     });
+
+    state.search.page = 1;
   } catch (err) {
     console.error('💥⚠️⛔😭👎🏳️', err);
     throw err;
@@ -72,9 +74,14 @@ export const updateServings = function (newServings) {
 };
 
 export const getSearchResultsPage = function (page = state.search.page) {
+  console.log(page);
   state.search.page = page;
   const start = (page - 1) * RES_PER_PAGE; //0
   const end = page * RES_PER_PAGE; //9
 
   return state.search.results.slice(start, end);
+};
+
+export const updateSearchPage = function (goToPage) {
+  state.search.page = goToPage;
 };
