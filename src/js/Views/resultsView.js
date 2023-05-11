@@ -11,6 +11,8 @@ class ResultsView extends View {
   _previewMarkup(data) {
     const windowID = window.location.hash.slice(1);
     const isActive = data.id === windowID;
+
+    //TODO : Add recipe and fix this.
     const isUserGenerated = data.isMine;
 
     return `<li class="preview">

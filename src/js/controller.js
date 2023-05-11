@@ -2,21 +2,15 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 import * as model from './model.js';
+import { MODAL_CLOSE_SEC } from './config.js';
 
 import recipeView from './Views/recipeView.js';
 import searchView from './Views/searchView.js';
 import resultsView from './Views/resultsView.js';
 import paginationView from './Views/paginationView.js';
+import addRecipeView from './Views/addRecipeView.js';
 
 recipeContainer = document.querySelector('.recipe');
-
-const timeout = function (s) {
-  return new Promise(function (_, reject) {
-    setTimeout(function () {
-      reject(new Error(`Request took too long! Timeout after ${s} second`));
-    }, s * 1000);
-  });
-};
 
 // https://forkify-api.herokuapp.com/v2
 
@@ -57,6 +51,8 @@ const controlSearchResults = async function () {
 
     // 4) Render Pagination button
     paginationView.render(model.state.search);
+
+    // 5) Render AddRecipe
   } catch (err) {
     console.error(err);
   }
@@ -81,11 +77,39 @@ const controlPagination = function (goToPage) {
   paginationView.render(model.state.search);
 };
 
+const controlAddRecipe = async function (ownRecipeData) {
+  try {
+    // 0) Show render spinner
+    addRecipeView.renderSpinner();
+    // 1) Get own recipe data
+    addRecipeView.addHandlerUpload(ownRecipeData);
+
+    // 2) Send data to AJAX
+    await model.uploadRecipe(ownRecipeData);
+
+    // 3) Render own recipe in UI
+    recipeView.render(model.state.recipe);
+
+    // 4) Render success message
+    addRecipeView.renderMessage();
+
+    // 5) Change URL id fit with recipe id
+    window.history.pushState(null, '', `#${model.state.recipe.id}`);
+    // 6) Close pop-up window
+    setTimeout(function () {
+      addRecipeView.toggleWindow();
+    }, MODAL_CLOSE_SEC * 1000);
+  } catch (err) {
+    addRecipeView.renderError(err.message);
+  }
+};
+
 const init = function () {
   recipeView.addHandlerRender(controlRecipe);
   recipeView.addHandlerUpdateServings(controlServings);
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerClick(controlPagination);
+  addRecipeView.addHandlerUpload(controlAddRecipe);
 };
 
 init();

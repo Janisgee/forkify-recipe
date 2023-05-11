@@ -1,4 +1,5 @@
 import { API_URL, RES_PER_PAGE, API_KEY } from './config.js';
+import { AJAX } from './helper.js';
 
 export const state = {
   recipe: {},
@@ -26,11 +27,7 @@ const createRecipeObject = function (data) {
 
 export const loadRecipe = async function (id) {
   try {
-    const apiUrl = `${API_URL}${id}`;
-
-    const response = await fetch(apiUrl);
-
-    const data = await response.json();
+    const data = await AJAX(`${API_URL}${id}`);
     state.recipe = createRecipeObject(data);
   } catch (err) {
     console.error('💥⚠️⛔😭👎🏳️', err);
@@ -41,10 +38,8 @@ export const loadRecipe = async function (id) {
 export const loadSearchResult = async function (query) {
   try {
     state.search.query = query;
-    const apiUrl = `${API_URL}?search=${query}&key=${API_KEY}`;
-    const response = await fetch(apiUrl);
 
-    const data = await response.json();
+    const data = await AJAX(`${API_URL}?search=${query}&key=${API_KEY}`);
     state.search.results = data.data.recipes.map(rec => {
       return {
         id: rec.id,
@@ -78,4 +73,44 @@ export const getSearchResultsPage = function (page = state.search.page) {
 
 export const updateSearchPage = function (goToPage) {
   state.search.page = goToPage;
+};
+
+export const uploadRecipe = async function (ownRecipeData) {
+  try {
+    console.log(ownRecipeData);
+    const ingredients = Object.entries(ownRecipeData)
+      .filter(entry => entry[0].startsWith('ingredient') && entry[1] !== '')
+      .map(ing => {
+        const ingArr = ing[1].split(',').map(el => el.trim());
+        console.log(ingArr);
+
+        const [quantity, unit, description] = ingArr;
+        console.log(quantity, unit, description);
+
+        if (ingArr.length !== 3)
+          throw new Error(
+            'Wrong ingredient format! Please use the correct format :)'
+          );
+
+        return { quantity: quantity ? +quantity : null, unit, description };
+      });
+    const recipe = {
+      cooking_time: +ownRecipeData.cookingTime,
+      image_url: ownRecipeData.image,
+      publisher: ownRecipeData.publisher,
+      servings: +ownRecipeData.servings,
+      source_url: ownRecipeData.sourceUrl,
+      title: ownRecipeData.title,
+      ingredients: ingredients,
+    };
+    console.log(recipe);
+
+    const data = await AJAX(`${API_URL}?key=${API_KEY}`, recipe);
+
+    state.recipe = createRecipeObject(data);
+
+    console.log(data);
+  } catch (err) {
+    console.error(err);
+  }
 };
